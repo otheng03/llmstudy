@@ -50,19 +50,26 @@ for i, x_i in enumerate(inputs):
         attn_scores[i, j] = torch.dot(x_i, x_j)
 print(attn_scores)
 
+# When computing the preceding attention score tensor,
+# we used for loops in Python. However, for loops are generally slow,
+# and we can achieve the same results using matrix multiplication.
 attn_scores = inputs @ inputs.T
 print(attn_scores)
 
+# Normalize each row so that the values in each row sum to 1
 attn_weights = torch.softmax(attn_scores, dim=-1)
 print(attn_weights)
 
+# We can verify that the rows indeed all sum to 1
 row_2_sum = sum([0.1385, 0.2379, 0.2333, 0.1240, 0.1082, 0.1581])
 print("Row 2 sum:", row_2_sum)
 print("All row sums:", attn_weights.sum(dim=-1))
 
+# Compute all context vectors via matrix multiplication
 all_context_vecs = attn_weights @ inputs
 print(all_context_vecs)
 
+# Double-check that the code is correct by comparing the second row with context_ vector_2 that we computed above
 print("Previous 2nd context vector:", context_vec_2)
 
 x_2 = inputs[1]
