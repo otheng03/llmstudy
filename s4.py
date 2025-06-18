@@ -1,7 +1,7 @@
 # Self-attention serves as the cornerstone of every LLM based on the transformer architecture.
 
-
 import torch
+
 inputs = torch.tensor(
   [[0.43, 0.15, 0.89], # Your     (x^1)
    [0.55, 0.87, 0.66], # journey  (x^2)
