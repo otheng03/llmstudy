@@ -8,7 +8,7 @@ class DummyGPTModel(nn.Module):
         super().__init__()
         self.toks_emb = nn.Embedding(cfg["vocab_size"], cfg["emb_dim"])
         self.pos_emb = nn.Embedding(cfg["context_length"], cfg["emb_dim"])
-        self.drop_emb = nn.Dropout(cfg["drop_rage"])
+        self.drop_emb = nn.Dropout(cfg["drop_rate"])
         self.trf_blocks = nn.Sequential(
             *[DummyTransformerBlock(cfg) for _ in range(cfg["n_layers"])],
         )
@@ -23,7 +23,7 @@ class DummyGPTModel(nn.Module):
         batch_size, seq_len = in_idx.shape
         tok_embeds = self.toks_emb(in_idx)
         pos_embeds = self.pos_emb(
-            torch.arange(seq_len, device=in_idx.device.device),
+            torch.arange(seq_len, device=in_idx.device),
         )
         x = tok_embeds + pos_embeds
         x = self.drop_emb(x)
@@ -58,3 +58,19 @@ batch.append(torch.tensor(tokenizer.encode(txt1)))
 batch.append(torch.tensor(tokenizer.encode(txt2)))
 batch = torch.stack(batch, dim=0)
 print(batch)
+
+GPT_CONFIG_124M = {
+    "vocab_size": 50257,  # Vocabulary size
+    "context_length": 1024,  # Context length
+    "emb_dim": 768,  # Embedding dimension
+    "n_heads": 12,  # Number of attention heads
+    "n_layers": 12,  # Number of layers
+    "drop_rate": 0.1,  # Dropout rate
+    "qkv_bias": False,  # Query-Key-Value bias
+}
+
+torch.manual_seed(123)
+model = DummyGPTModel(GPT_CONFIG_124M)
+logits = model(batch)
+print("Output shape:", logits.shape)
+print(logits)
